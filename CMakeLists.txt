@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(cmdl VERSION 0.0.1 LANGUAGES CXX)
+project(typack VERSION 0.0.1 LANGUAGES CXX)
 enable_testing()
 
 add_library(typack INTERFACE)
