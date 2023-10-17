@@ -39,6 +39,9 @@ int main() {
     IS_SAME(uut::remove_t<int, char>, pack<float>);
     IS_SAME(uut::remove_t<pack<char, float>>, pack<int>);
 
+    IS_SAME(uut::remove_t<int, float, char>, empty_t);
+    IS_SAME(uut::remove_t<double>, uut);
+
     // Something silly...
     IS_SAME(char,
             pack<int, char>
