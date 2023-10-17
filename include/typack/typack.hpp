@@ -5,7 +5,7 @@
 
 namespace ty {
 
-template<typename ...> struct pack;
+template<typename...> struct pack;
 
 ///
 /// Empty specialisation
@@ -52,9 +52,7 @@ struct pack<Head, Tail...> {
     /// Random access
     ///
     template<std::size_t N>
-    struct at {
-        using type = typename tail_t::template at<N - 1>::type;
-    };
+    struct at { using type = typename tail_t::template at<N - 1>::type; };
 
     template<> struct at<0> { using type = head_t; };
     template<std::size_t N> using at_t = typename at<N>::type;
@@ -63,9 +61,7 @@ struct pack<Head, Tail...> {
     /// Concat
     ///
     template<typename ...Ts>
-    struct concat {
-        using type = pack<Head, Tail..., Ts...>;
-    };
+    struct concat { using type = pack<Head, Tail..., Ts...>; };
 
     template<typename ...Ts>
     struct concat<pack<Ts...>> { using type = typename concat<Ts...>::type; };
