@@ -17,7 +17,7 @@ int main() {
         std::is_same_v<pack::at_t<1>, int> &&
         std::is_same_v<pack::concat_t<int>, ty::pack<char, int, int>> &&
         std::is_same_v<pack::remove_t<int>, ty::pack<char>> &&
-        pack::contains_v<int> && !pack::contains_v<double>
+        pack::contains_any_v<int> && !pack::contains_any_v<double>
     );
 
     std::cout << "pack size: " << pack::size << std::endl; // pack size: 2

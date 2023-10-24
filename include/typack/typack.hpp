@@ -40,7 +40,7 @@ struct pack<> {
     /// Contains
     ///
     template<typename ...Ts>
-    struct contains : std::false_type {};
+    struct contains_any : std::false_type {};
 };
 
 using empty_t = pack<>;
@@ -106,18 +106,18 @@ struct pack<Head, Tail...> {
     /// Contains
     ///
     template<typename ...Ts>
-    struct contains {
+    struct contains_any {
         static constexpr auto value = (std::is_same_v<Head, Ts> || ...) ||
-                tail_t::template contains<Ts...>::value;
+                tail_t::template contains_any<Ts...>::value;
     };
 
     template<typename ...Ts>
-    struct contains<pack<Ts...>> {
-        static constexpr auto value = contains<Ts...>::value;
+    struct contains_any<pack<Ts...>> {
+        static constexpr auto value = contains_any<Ts...>::value;
     };
 
     template<typename ...Ts>
-    static constexpr auto contains_v = contains<Ts...>::value;
+    static constexpr auto contains_any_v = contains_any<Ts...>::value;
 };
 
 } // namespace ty
