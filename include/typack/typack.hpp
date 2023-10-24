@@ -2,6 +2,7 @@
 #define TYPACK_H
 
 #include <cstddef>
+#include <type_traits>
 
 namespace ty {
 
@@ -34,6 +35,12 @@ struct pack<> {
 
     template<typename ...Ts>
     using remove_t = typename remove<Ts...>::type;
+
+    ///
+    /// Contains
+    ///
+    template<typename ...Ts>
+    struct contains : std::false_type {};
 };
 
 using empty_t = pack<>;
@@ -94,6 +101,23 @@ struct pack<Head, Tail...> {
 
     template<typename ...Ts>
     using remove_t = typename remove<Ts...>::type;
+
+    ///
+    /// Contains
+    ///
+    template<typename ...Ts>
+    struct contains {
+        static constexpr auto value = (std::is_same_v<Head, Ts> || ...) ||
+                tail_t::template contains<Ts...>::value;
+    };
+
+    template<typename ...Ts>
+    struct contains<pack<Ts...>> {
+        static constexpr auto value = contains<Ts...>::value;
+    };
+
+    template<typename ...Ts>
+    static constexpr auto contains_v = contains<Ts...>::value;
 };
 
 } // namespace ty

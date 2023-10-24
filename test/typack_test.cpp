@@ -49,6 +49,17 @@ int main() {
                 ::remove_t<float>
                 ::tail_t
                 ::head_t);
+    
+    // Contains
+    static_assert(uut::contains_v<int>);
+    static_assert(uut::contains_v<float>);
+    static_assert(uut::contains_v<char>);
+    static_assert(uut::contains_v<ty::pack<int, double>>);
+
+    static_assert(!uut::contains_v<double>);
+    static_assert(!uut::contains_v<>);
+    static_assert(!uut::contains_v<ty::pack<double, short>>);
+    static_assert(!uut::contains_v<ty::empty_t>);
 
     return 0;
 }
