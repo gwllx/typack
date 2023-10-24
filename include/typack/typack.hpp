@@ -128,6 +128,11 @@ struct pack<Head, Tail...> {
     };
 
     template<typename ...Ts>
+    struct contains_all<pack<Ts...>> {
+        static constexpr auto value = contains_all<Ts...>::value;
+    };
+
+    template<typename ...Ts>
     static constexpr auto contains_all_v = contains_all<Ts...>::value;
 };
 
