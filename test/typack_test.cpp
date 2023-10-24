@@ -49,8 +49,8 @@ int main() {
                 ::remove_t<float>
                 ::tail_t
                 ::head_t);
-    
-    // Contains
+
+    // Contains any
     static_assert(uut::contains_any_v<int>);
     static_assert(uut::contains_any_v<float>);
     static_assert(uut::contains_any_v<char>);
@@ -60,6 +60,12 @@ int main() {
     static_assert(!uut::contains_any_v<>);
     static_assert(!uut::contains_any_v<ty::pack<double, short>>);
     static_assert(!uut::contains_any_v<ty::empty_t>);
+
+    // Contains all
+    static_assert(uut::contains_all_v<int, float>);
+    static_assert(uut::contains_all_v<>);
+    static_assert(!uut::contains_all_v<float, double>);
+    static_assert(!uut::contains_all_v<double, short>);
 
     return 0;
 }

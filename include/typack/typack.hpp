@@ -37,7 +37,7 @@ struct pack<> {
     using remove_t = typename remove<Ts...>::type;
 
     ///
-    /// Contains
+    /// Contains any
     ///
     template<typename ...Ts>
     struct contains_any : std::false_type {};
@@ -103,7 +103,7 @@ struct pack<Head, Tail...> {
     using remove_t = typename remove<Ts...>::type;
 
     ///
-    /// Contains
+    /// Contains any
     ///
     template<typename ...Ts>
     struct contains_any {
@@ -118,6 +118,17 @@ struct pack<Head, Tail...> {
 
     template<typename ...Ts>
     static constexpr auto contains_any_v = contains_any<Ts...>::value;
+
+    ///
+    /// Contains all
+    ///
+    template<typename ...Ts>
+    struct contains_all {
+        static constexpr auto value = (contains_any_v<Ts> && ...);
+    };
+
+    template<typename ...Ts>
+    static constexpr auto contains_all_v = contains_all<Ts...>::value;
 };
 
 } // namespace ty
