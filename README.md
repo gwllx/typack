@@ -19,7 +19,7 @@ int main() {
     // at<N> - Type at position N
     static_assert(std::is_same_v<pack::at_t<1>, int>);
 
-    // concat<Ts...> - Add types to the end of the pack
+    // concat_t<Ts...> - Add types to the end of the pack
     static_assert(std::is_same_v<pack::concat_t<int>,
             ty::pack<char, int, int>>);
 
