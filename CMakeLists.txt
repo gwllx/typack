@@ -8,3 +8,4 @@ target_compile_features(typack INTERFACE cxx_std_20)
 target_include_directories(typack INTERFACE include)
 
 add_subdirectory(test)
+add_subdirectory(doc)

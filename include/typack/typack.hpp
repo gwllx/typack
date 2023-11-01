@@ -6,135 +6,119 @@
 
 namespace ty {
 
-template<typename...> struct pack;
+  /// \brief Represents a type template parameter pack.
+  /// @tparam ... Parameter pack types
+  template<typename ...> struct pack;
 
-///
-/// Empty specialisation
-///
-template<>
-struct pack<> {
-    static constexpr auto size = std::size_t{0};
-
-    ///
-    /// Concat
-    ///
-    template<typename ...Ts>
-    struct concat { using type = pack<Ts...>; };
+  namespace detail {
 
     template<typename ...Ts>
-    struct concat<pack<Ts...>> { using type = pack<Ts...>; };
+    struct pack_type : std::type_identity<pack<Ts...>> {};
+
+    template<typename, bool> struct filter_pack;
+
+    template<typename T>
+    struct filter_pack<T, true> : pack_type<T> {};
+
+    template<typename T>
+    struct filter_pack<T, false> : pack_type<> {};
 
     template<typename ...Ts>
-    using concat_t = typename concat<Ts...>::type;
+    struct pack_base {
+      static constexpr auto size = sizeof...(Ts);
 
-    ///
-    /// Remove
-    ///
-    template<typename ...Ts>
-    struct remove { using type = pack<>; };
+      template<typename ...Us>
+      struct concat : pack_type<Ts..., Us...> {};
 
-    template<typename ...Ts>
-    using remove_t = typename remove<Ts...>::type;
+      template<typename ...Us>
+      struct concat<pack<Us...>> : concat<Us...> {};
 
-    ///
-    /// Contains any
-    ///
-    template<typename ...Ts>
-    struct contains_any : std::false_type {};
-};
+      template<typename ...Us>
+      using concat_t = typename concat<Us...>::type;
 
-using empty_t = pack<>;
+      template<template<typename ...> typename Trait, typename ...Us>
+      struct any : std::integral_constant<bool,
+          (Trait<Ts, Us...>::value || ...)> {};
 
-///
-/// Main specialisation
-///
-template<typename Head, typename ...Tail>
-struct pack<Head, Tail...> {
-    static constexpr auto size = sizeof...(Tail) + std::size_t{1};
+      template<template<typename ...> typename Trait, typename ...Us>
+      static constexpr auto any_v = any<Trait, Us...>::value;
 
+      template<template<typename ...> typename Trait, typename ...Us>
+      struct all : std::integral_constant<bool,
+          (Trait<Ts, Us...>::value && ...)> {};
+
+      template<template<typename ...> typename Trait, typename ...Us>
+      static constexpr auto all_v = all<Trait, Us...>::value;
+
+      template<template<typename ...> typename Tuple>
+      using into_t = Tuple<Ts...>;
+    };
+
+  } // namespace detail
+
+  template<>
+  struct pack<> : detail::pack_base<> {
+    template<std::size_t>
+    struct out_of_bounds : std::false_type {};
+
+    template<std::size_t I>
+    struct at {
+      static_assert(out_of_bounds<I>::value, "pack index out of bounds");
+    };
+
+    template<template<typename ...> typename, typename ...>
+    struct map : detail::pack_type<> {};
+
+    template<template<typename ...> typename Trait, typename ...Ts>
+    using map_t = typename map<Trait, Ts...>::type;
+
+    template<template<typename ...> typename, typename ...>
+    struct filter : detail::pack_type<> {};
+
+    template<template<typename ...> typename Trait, typename ...Ts>
+    using filter_t = typename filter<Trait, Ts...>::type;
+  };
+
+  template<typename Head, typename ...Tail>
+  struct pack<Head, Tail...> : detail::pack_base<Head, Tail...> {
     using head_t = Head;
     using tail_t = pack<Tail...>;
 
-    ///
-    /// Random access
-    ///
-    template<std::size_t N>
-    struct at { using type = typename tail_t::template at<N - 1>::type; };
-
-    template<> struct at<0> { using type = head_t; };
-    template<std::size_t N> using at_t = typename at<N>::type;
-
-    ///
-    /// Concat
-    ///
-    template<typename ...Ts>
-    struct concat { using type = pack<Head, Tail..., Ts...>; };
-
-    template<typename ...Ts>
-    struct concat<pack<Ts...>> { using type = typename concat<Ts...>::type; };
-
-    template<typename ...Ts>
-    using concat_t = typename concat<Ts...>::type;
-
-    ///
-    /// Remove
-    ///
-    template<typename...> struct remove;
-
-    template<typename First, typename ...Ts>
-    struct remove<First, Ts...> {
-        using rm_tail_t = typename tail_t::template remove<First>::type;
-        using rm_first_t = typename pack<Head>::template concat_t<rm_tail_t>;
-        using type = typename rm_first_t::template remove<Ts...>::type;
-    };
-
-    template<typename ...Ts>
-    struct remove<Head, Ts...> {
-        using type = typename tail_t::template remove<Head, Ts...>::type;
-    };
+    template<std::size_t I>
+    struct at : std::type_identity<
+        typename tail_t::template at<I - 1>::type> {};
 
     template<>
-    struct remove<> { using type = pack<Head, Tail...>; };
+    struct at<0> : std::type_identity<Head> {};
 
-    template<typename ...Ts>
-    struct remove<pack<Ts...>> { using type = typename remove<Ts...>::type; };
+    template<std::size_t I>
+    using at_t = typename at<I>::type;
 
-    template<typename ...Ts>
-    using remove_t = typename remove<Ts...>::type;
+    template<template<typename ...> typename Trait, typename ...Us>
+    struct map : std::type_identity<
+        typename pack<typename Trait<Head, Us...>::type>::template concat_t<
+            typename tail_t::template map<Trait, Us...>::type>> {};
 
-    ///
-    /// Contains any
-    ///
-    template<typename ...Ts>
-    struct contains_any {
-        static constexpr auto value = (std::is_same_v<Head, Ts> || ...) ||
-                tail_t::template contains_any<Ts...>::value;
-    };
+    template<template<typename ...> typename Trait, typename ...Us>
+    using map_t = typename map<Trait, Us...>::type;
 
-    template<typename ...Ts>
-    struct contains_any<pack<Ts...>> {
-        static constexpr auto value = contains_any<Ts...>::value;
-    };
+    template<template<typename ...> typename Trait, typename ...Us>
+    struct filter : std::type_identity<
+        typename detail::filter_pack<Head, Trait<Head, Us...>::value>::type
+            ::template concat_t<typename tail_t
+                ::template filter<Trait, Us...>::type>> {};
 
-    template<typename ...Ts>
-    static constexpr auto contains_any_v = contains_any<Ts...>::value;
+    template<template<typename ...> typename Trait, typename ...Ts>
+    using filter_t = typename filter<Trait, Ts...>::type;
+  };
 
-    ///
-    /// Contains all
-    ///
-    template<typename ...Ts>
-    struct contains_all {
-        static constexpr auto value = (contains_any_v<Ts> && ...);
-    };
+  /// \brief Pack specialization to unwrap an inner pack's types.
+  /// @tparam ...Ts Inner pack types
+  template<typename ...Ts>
+  struct pack<pack<Ts...>> : pack<Ts...> {};
 
-    template<typename ...Ts>
-    struct contains_all<pack<Ts...>> {
-        static constexpr auto value = contains_all<Ts...>::value;
-    };
-
-    template<typename ...Ts>
-    static constexpr auto contains_all_v = contains_all<Ts...>::value;
-};
+  /// \brief The empty pack.
+  using empty_t = pack<>;
 
 } // namespace ty
 
