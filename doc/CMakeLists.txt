@@ -5,7 +5,7 @@ find_package(Doxygen)
 FetchContent_Declare(
     doc_theme
     GIT_REPOSITORY https://github.com/jothepro/doxygen-awesome-css.git
-    GIT_TAG df83fbf22cfff76b875c13d324baf584c74e96d0 # v2.2.1
+    GIT_TAG v2.2.1
 )
 
 # Download doxygen-awesome-css.
@@ -29,5 +29,10 @@ set(DOXYGEN_HTML_EXTRA_STYLESHEET
   ${doc_theme_SOURCE_DIR}/doxygen-awesome-sidebar-only-darkmode-toggle.css
 )
 
-# Add docs target.
+# Disable code folding (not yet compatable with doxygen-awesome-css).
+if(DOXYGEN_VERSION VERSION_GREATER_EQUAL 1.9.8)
+  set(DOXYGEN_HTML_CODE_FOLDING NO)
+endif()
+
+# Add doc target.
 doxygen_add_docs(typack_doc ${CMAKE_SOURCE_DIR}/include/typack/typack.hpp)
