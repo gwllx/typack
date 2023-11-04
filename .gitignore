@@ -1,5 +1,2 @@
-# IDEs
 .vscode/
-
-# CMake
-build/
+.DS_Store
