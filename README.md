@@ -1,12 +1,13 @@
-# typack – Type Pack
+# Type Pack
 
-A compile-time API for working with type template parameter packs.
+A compile-time API for manipulation of C++ type template parameter packs. 
 
 ## Example
 
 ```cpp
 #include "typack/typack.hpp"
 #include <tuple>
+#include <type_traits>
 
 int main() {
     using tuple = ty::pack<char, short, double>;
@@ -16,4 +17,6 @@ int main() {
 }
 ```
 
-See the [docs](https://gwllx.github.io/typack) for more information.
+See [API Overview](./docs/api-overview.md) or
+[Class List](https://gwllx.github.io/typack/annotated.html) for more
+information.
