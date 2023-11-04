@@ -118,6 +118,7 @@ namespace ty {
     /// \endcond
 
     /// \brief Provides a member typedef type which is the empty pack
+    /// \details Prefer to use \ref map_t over this struct.
     template<template<typename ...> typename, typename ...>
     struct map : detail::pack_type<> {};
 
@@ -128,6 +129,7 @@ namespace ty {
     using map_t = typename map<Mod, Ts...>::type;
 
     /// \brief Provides a member typedef which is the empty pack
+    /// \details Prefer to use \ref filter_t over this struct.
     template<template<typename ...> typename, typename ...>
     struct filter : detail::pack_type<> {};
 
@@ -170,6 +172,7 @@ namespace ty {
     /// transformed by Mod
     /// \tparam Mod Type modifier
     /// \tparam ...Ts Mod type parameters
+    /// \details Prefer to use \ref map_t over this struct.
     template<template<typename ...> typename Mod, typename ...Ts>
     struct map : std::type_identity<
         typename pack<typename Mod<Head, Ts...>::type>::template concat_t<
@@ -185,6 +188,7 @@ namespace ty {
     /// this pack that match Trait
     /// \tparam Trait Type trait
     /// \tparam ...Ts Trait type parameters
+    /// \details Prefer to use \ref filter_t over this struct.
     template<template<typename ...> typename Trait, typename ...Ts>
     struct filter : std::type_identity<
         typename detail::filter_pack<Head, Trait<Head, Ts...>::value>::type
