@@ -43,9 +43,6 @@ set(DOXYGEN_FULL_PATH_NAMES YES)
 set(DOXYGEN_STRIP_FROM_PATH ${CMAKE_SOURCE_DIR})
 set(DOXYGEN_STRIP_FROM_INC_PATH ${CMAKE_SOURCE_DIR})
 
-# Add custom css.
-list(APPEND DOXYGEN_HTML_EXTRA_STYLESHEET custom.css)
-
 # Add doc target.
 doxygen_add_docs(typack_doc
   ${CMAKE_SOURCE_DIR}/README.md
