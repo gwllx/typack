@@ -17,6 +17,6 @@ int main() {
 }
 ```
 
-See [API Overview](./docs/api-overview.md) or
+See [API Overview](./doc/API.md) or
 [Class List](https://gwllx.github.io/typack/annotated.html) for more
 information.
