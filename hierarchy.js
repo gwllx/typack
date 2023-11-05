@@ -4,7 +4,7 @@ var hierarchy =
       [ "ty::detail::pack_base< Ts >::all< Trait, Us >", "structty_1_1detail_1_1pack__base_1_1all.html", null ],
       [ "ty::detail::pack_base< Ts >::any< Trait, Us >", "structty_1_1detail_1_1pack__base_1_1any.html", null ]
     ] ],
-    [ "ty::pack< Ts >", "structty_1_1pack.html", null ],
+    [ "ty::pack<... >", "structty_1_1pack.html", null ],
     [ "ty::pack< Ts... >", "structty_1_1pack.html", [
       [ "ty::pack< pack< Ts... > >", "structty_1_1pack_3_01pack_3_01_ts_8_8_8_01_4_01_4.html", null ]
     ] ],
