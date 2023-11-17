@@ -10,7 +10,7 @@ A compile-time API for manipulation of C++ type template parameter packs.
 #include <type_traits>
 
 int main() {
-    using tuple = ty::pack<char, short, double>;
+    using tuple = ty::pack<char, short, double>
             ::filter_t<std::is_integral>
             ::concat_t<int>
             ::into_t<std::tuple>; // std::tuple<char, short, int>
